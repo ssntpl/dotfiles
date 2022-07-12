@@ -1,0 +1,25 @@
+function _e {
+    setopt LOCALOPTIONS
+    unsetopt AUTOPUSHD
+    local -a paths
+    paths=(${WORKING_DIRECTORIES//:/ })
+    if [[ $PREFIX == *'/'* ]] {
+        for p ($paths) {
+            if [[ ${PREFIX[(ws:/:)1]} == ${p:t} ]] {
+                local oldpwd=$PWD
+                cd -q ${p:h}
+                local matches
+                matches=($PREFIX*(/))
+                 if [[ ${#matches} -gt 0 ]] {
+                    compadd -p ${matches[1]:h}'/' -q -S '/' -- ${matches:t}
+                }
+                cd -q $oldpwd
+                return
+            }
+        }
+    } else {
+        compadd -q -S '/' -- ${^paths:t}
+    }
+}
+
+compdef _e e

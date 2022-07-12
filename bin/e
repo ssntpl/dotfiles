@@ -1,0 +1,94 @@
+#!/bin/sh
+#
+# Quick shortcut to an editor.
+#
+# This means that as I travel back and forth between editors, hey, I don't have
+# to re-learn any arcane commands. Neat.
+#
+# USAGE:
+#
+#   $ e
+#   # => opens the current directory in your editor
+#
+#   $ e .
+#   $ e /usr/local
+#   # => opens the specified directory in your editor
+
+# set -e
+
+displayUsageAndExit() {
+	echo "Open the project in your default editor."
+	echo ""
+	echo "Usage: e [options] [project]"
+	echo ""
+	echo "Project: Absoulte path of the project"
+	echo "         Or relative path from current directory"
+	echo "         Or relative path from any of the WORKING_DIRECTORIES"
+	echo "         Or current directory if ommitted"
+	echo ""
+    echo "Options:"
+	echo "  -o, --open    Open in finder"
+	echo "  -e, --edit    Open in editor"
+	echo "  -p, --print   Print path"
+	echo "  -c, --copy    Copy path to clipboard"
+	echo "  -h, --help    Show this help message and exit"
+    echo ""
+	echo "  If no option is provided then open an editor by default."
+	exit
+}
+
+filePath=.
+flag_open=0
+flag_print=0
+flag_copy=0
+flag_edit=0
+
+while test $# -gt 0; do
+	case "$1" in
+		"-h"|"--help") displayUsageAndExit ;;
+		"-o"|"--open") flag_open=1 ;;
+		"-p"|"--print") flag_print=1 ;;
+		"-c"|"--copy") flag_copy=1 ;;
+		"-e"|"--edit") flag_edit=1 ;;
+        *) filePath=$1 ;;
+	esac
+	shift
+done
+
+if [ -f $filePath ] || [ -d $filePath ]; then
+    # File or directory exixts in current working directory
+    filePath=$(realpath "$filePath")
+elif [ $filePath == "dot" ] || [ $filePath == "dotfiles" ]; then
+    filePath="$DOTFILES"
+else
+    while read -d ':' p; do
+        if test -d "$p/$filePath"; then
+            filePath="$p/$filePath"
+            break
+        fi
+    done <<< "$WORKING_DIRECTORIES:"
+fi
+
+if [ $flag_print == 1 ]; then
+    echo "$filePath";
+fi
+
+if [ $flag_copy == 1 ]; then
+    echo "$filePath" | pbcopy;
+fi
+
+if [ $flag_open == 1 ]; then
+    open "$filePath";
+fi
+
+if [ ! $flag_print == 1 ] && [ ! $flag_copy == 1 ] && [ ! $flag_open == 1 ]; then
+    flag_edit=1
+fi
+
+if [ $flag_edit == 1 ]; then
+    if ls ${filePath}/*.xcworkspace >/dev/null  2>&1 || ls ${filePath}/*.xcodeproj >/dev/null  2>&1; then
+        exec xed "$filePath"
+    else
+        exec "$EDITOR" "$filePath"
+    fi;
+fi
