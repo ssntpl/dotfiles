@@ -42,7 +42,10 @@ set_config "USERCONFIG"
 
 # Confirm user to install xcode
 if read -p "Do you want to install xcode? [Y/n] " -n 1 -r INSTALL_XCODE && echo && ([[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]); then
+  # Add cocoapods
   echo "brew 'cocoapods'" >> "$HOME/.Brewfile"
+
+  # We must insert xcode at the end because any further brew packages will fail until we accept the license
   echo "mas 'Xcode', id: 497799835" >> "$HOME/.Brewfile"
 fi
 

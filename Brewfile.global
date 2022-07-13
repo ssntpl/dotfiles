@@ -95,7 +95,6 @@ mas 'Slack for Desktop', id: 803453959 # cask 'slack'
 mas 'Trello', id: 1278508951
 
 # Utility and Tools
-mas 'Microsoft Remote Desktop', id: 1295203466
 cask 'the-unarchiver'
 cask 'tunnelblick'  # Free VPN client
 brew 'speedtest'
