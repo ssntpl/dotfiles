@@ -8,7 +8,7 @@ fi
 
 user_input "Please enter your full name (eg. John Doe):" "NAME"
 user_input "Please enter your official email id (eg. john.doe@apple.com):" "EMAIL"
-user_input "Please enter your employee id (eg. 100022):" "EMPID"
+user_input "Please enter your employee id (eg. 10001):" "EMPID"
 
 USERCONFIG="$DOTFILES/users/$EMPID"
 
@@ -33,16 +33,33 @@ fi
 # Update Homebrew recipes
 echo " => Updating Homebrew"
 brew update
+rm -rf "$HOME/.Brewfile"
+cp "$DOTFILES/Brewfile.global" "$HOME/.Brewfile"
+if [[ -f "$USERCONFIG/Brewfile" ]]; then
+  cat "$USERCONFIG/Brewfile" >> "$HOME/.Brewfile"
+fi
+set_config "USERCONFIG"
+
+# Confirm user to install xcode
+if read -p "Do you want to install xcode? [Y/n] " -n 1 -r INSTALL_XCODE && echo && ([[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]); then
+  echo "brew 'cocoapods'" >> "$HOME/.Brewfile"
+  echo "mas 'Xcode', id: 497799835" >> "$HOME/.Brewfile"
+fi
 
 # Install all our dependencies with bundle (See Brewfile)
 echo " => Installing brew bundles"
-rm -rf "$DOTFILES/Brewfile"
-cp "$DOTFILES/Brewfile.global" "$DOTFILES/Brewfile"
-if [[ -f "$USERCONFIG/Brewfile" ]]; then
-  cat "$USERCONFIG/Brewfile" >> "$DOTFILES/Brewfile"
-fi
 brew tap homebrew/bundle
-brew bundle -q
+brew bundle -q --file="$HOME/.Brewfile"
+
+if [[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]; then
+  sudo xcodebuild -license accept
+fi
+
+# Update all Apple software and auto agree to any licenses
+if read -p "Do you want to update Apple software? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
+  echo " => Updating all system software"
+  sudo softwareupdate --install --agree-to-license -a
+fi
 
 # Set default MySQL root password and auth type
 # echo " => Setting root mysql password to 'password'"

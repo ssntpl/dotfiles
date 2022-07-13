@@ -40,8 +40,8 @@ brew 'phpmyadmin'
 cask 'phpmon'       # OpenSource PHP version switcher and settings monitor
 
 # Mobile app development
-brew 'cocoapods'
-mas 'Xcode', id: 497799835
+# brew 'cocoapods'
+# mas 'Xcode', id: 497799835
 # cask 'flutter'
 # cask 'android-studio'
 
