@@ -19,7 +19,7 @@ set_config "DOTFILES"
 set_config "USERCONFIG"
 
 # Check for Oh My Zsh and install if we don't have it
-if test ! $(which zsh); then
+if test ! $(which omz); then
 echo " => Installing Oh My Zsh"
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
 fi
