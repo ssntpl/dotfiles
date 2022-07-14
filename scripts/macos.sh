@@ -14,12 +14,32 @@ sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 ###############################################################################
-# General UI/UX                                                               #
+# General                                                                     #
 ###############################################################################
 
 # Disable "Optimize Mac Storage" option to prevent offloading of DOTFILES from local storage
 #  → System Preferences → Apple ID → Click on iCloud in the sidebar → uncheck Optimise Mac Storage
 defaults write com.apple.bird optimize-storage -bool false
+
+# Create ~/Developer folder if it doesn't exist
+echo " => Creating ~/Developer folder"
+mkdir -p $HOME/Developer
+
+# Update computer name (as done via System Preferences → Sharing)
+echo " => Updating computer name"
+NAME_WITHOUT_SPACE=$(echo $NAME | sed 's/ //g')
+sudo scutil --set ComputerName "$NAME_WITHOUT_SPACE"
+sudo scutil --set HostName "$NAME_WITHOUT_SPACE"
+sudo scutil --set LocalHostName "$NAME_WITHOUT_SPACE"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$NAME_WITHOUT_SPACE"
+
+# Enable screen sharing
+# sudo defaults write /var/db/launchd.db/com.apple.launchd/overrides.plist com.apple.screensharing -dict Disabled -bool false
+# sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
+
+###############################################################################
+# General UI/UX                                                               #
+###############################################################################
 
 # Disable the sound effects on boot
 # sudo nvram SystemAudioVolume=" "
@@ -149,8 +169,8 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 # defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
-# defaults write NSGlobalDomain KeyRepeat -int 1
-# defaults write NSGlobalDomain InitialKeyRepeat -int 10
+defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
@@ -375,18 +395,18 @@ chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
 # defaults write com.apple.dock show-process-indicators -bool true
 
 # Wipe all (default) app icons from the Dock
-# This is only really useful when setting up a new Mac, or if you don’t use
-# the Dock to launch apps.
+killall Dock
 defaults write com.apple.dock persistent-apps -array
 add_dock_item "/System/Applications/Mail.app"
 add_dock_item "/Applications/Trello.app"
 add_dock_item "/Applications/Slack.app"
 add_dock_item "/Applications/Skype.app"
 add_dock_item "/Applications/Safari.app"
-add_dock_item "/Applications/Google\ Chrome.app"
+add_dock_item "/Applications/Google Chrome.app"
 add_dock_item "/System/Applications/Utilities/Terminal.app"
 add_dock_item "/Applications/Xcode.app"
-add_dock_item "/Applications/Visual\ Studio\ Code.app"
+add_dock_item "/Applications/Visual Studio Code.app"
+add_dock_item "/Applications/Postman.app"
 
 # Show only open applications in the Dock
 # defaults write com.apple.dock static-only -bool true

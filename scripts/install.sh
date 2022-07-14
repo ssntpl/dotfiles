@@ -6,6 +6,11 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 50; kill -0 "$$" || exit; done 2>/dev/null &
 
+# launch process to prevent sleep and move it to the background
+caffeinate -s &
+# save the process ID
+CAFFEINATE_PID=$!
+
 # Uninstall mackup configurations if already present for old user
 if [[ -d "$USERCONFIG/mackup" ]]; then
   echo " => Uninstalling mackup configurations"
@@ -141,18 +146,10 @@ else
   set_config "directory" "$mackup_dir" "$HOME/.mackup.cfg"
 fi
 
-# Create ~/Developer folder if it doesn't exist
-echo " => Creating ~/Developer folder"
-mkdir -p $HOME/Developer
-
-# Update computer name (as done via System Preferences → Sharing)
-echo " => Updating computer name"
-sudo scutil --set ComputerName "$NAME"
-sudo scutil --set HostName "$NAME"
-sudo scutil --set LocalHostName "$NAME"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$NAME"
-
-# TODO: Change the localhost page to contain some basic information
+# Change the localhost page to contain some basic information
+sudo rm -rf /Library/WebServer/Documents/index.html
+sudo rm -rf /Library/WebServer/Documents/index.html.en
+echo "The system is assigned to <br/><br/>$NAME <br/>$EMAIL <br/>$EMPID" | sudo tee -a /Library/WebServer/Documents/index.html > /dev/null
 
 # Set macOS preferences
 if [[ -f "$DOTFILES/scripts/macos.sh" ]]; then # && read -p "Do you want to reset macOS preferences? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
@@ -177,6 +174,9 @@ if [[ -f "$DOTFILES/scripts/backup.sh" ]]; then
   echo " => Backing up your Mac"
   source "$DOTFILES/scripts/backup.sh"
 fi
+
+# kill caffeinate so the computer can sleep if it wants to
+kill $CAFFEINATE_PID
 
 echo
 echo "System setup is complete."
