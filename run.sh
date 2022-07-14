@@ -14,12 +14,6 @@ echo
 echo "Setting up your Mac..."
 echo
 
-# Ask for the administrator password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
-
 ICLOUD=$HOME/Library/Mobile\ Documents/com~apple~CloudDocs
 CONFIG_FILE=$HOME/.ssntpl
 
@@ -30,9 +24,6 @@ fi
 
 # We are setting DOTFILES after sourcing the CONFIG_FILE as it may contain outdated location
 DOTFILES=$(dirname "$(realpath $0)")
-
-# Source the functions required for this script
-source "$DOTFILES/scripts/functions.sh"
 
 # Download all the dotfiles before proceeding to the next step
 ICLOUD_DOTFILES_TOTAL_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
@@ -46,6 +37,9 @@ if (( $ICLOUD_DOTFILES_TOTAL_COUNT )); then
     echo " => Remaining $ICLOUD_DOTFILES_COUNT of $ICLOUD_DOTFILES_TOTAL_COUNT"
   done
 fi
+
+# Source the functions required for this script
+source "$DOTFILES/scripts/functions.sh"
 
 # Setup fresh system
 if ! ( [[ -f "$HOME/.ssntpl" ]] && read -p "Do you want to reset your Mac? [y/N] " -n 1 -r && echo && [[ ! $REPLY =~ ^[Yy]$ ]] ); then

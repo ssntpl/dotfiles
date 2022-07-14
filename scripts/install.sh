@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Ask for the administrator password upfront
+sudo -v
+
+# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+while true; do sudo -n true; sleep 50; kill -0 "$$" || exit; done 2>/dev/null &
+
 # Uninstall mackup configurations if already present for old user
 if [[ -d "$USERCONFIG/mackup" ]]; then
   echo " => Uninstalling mackup configurations"
