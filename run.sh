@@ -34,12 +34,18 @@ DOTFILES=$(dirname "$(realpath $0)")
 # Source the functions required for this script
 source "$DOTFILES/scripts/functions.sh"
 
-# Disable "Optimize Mac Storage" option to prevent offloading of DOTFILES from local storage
-# TODO:  → System Preferences → Apple ID → Click on iCloud in the sidebar → uncheck Optimise Mac Storage
-
-echo "Downloading backup files from icloud"
-find "$DOTFILES" -type f -name "*.icloud" -exec brctl download {} \;
-# TODO: wait for icloud files to download
+# Download all the dotfiles before proceeding to the next step
+ICLOUD_DOTFILES_TOTAL_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
+ICLOUD_DOTFILES_COUNT=$ICLOUD_DOTFILES_TOTAL_COUNT
+if (( $ICLOUD_DOTFILES_TOTAL_COUNT )); then
+  echo "Downloading $ICLOUD_DOTFILES_TOTAL_COUNT backup files from icloud..."
+  find "$DOTFILES" -type f -name "*.icloud" -exec brctl download {} \;
+  while (( $ICLOUD_DOTFILES_COUNT )); do
+    sleep 10
+    ICLOUD_DOTFILES_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
+    echo " => Remaining $ICLOUD_DOTFILES_COUNT of $ICLOUD_DOTFILES_TOTAL_COUNT"
+  done
+fi
 
 # Setup fresh system
 if ! ( [[ -f "$HOME/.ssntpl" ]] && read -p "Do you want to reset your Mac? [y/N] " -n 1 -r && echo && [[ ! $REPLY =~ ^[Yy]$ ]] ); then
@@ -48,7 +54,7 @@ if ! ( [[ -f "$HOME/.ssntpl" ]] && read -p "Do you want to reset your Mac? [y/N]
 fi
 
 # Backup system
-if [[ -f "$DOTFILES/scripts/backup.sh" ]] && read -p "Do you want to backup your Mac? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
+if [[ -f "$DOTFILES/scripts/backup.sh" ]]; then # && read -p "Do you want to backup your Mac? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
   echo " => Backing up your Mac"
   source "$DOTFILES/scripts/backup.sh"
 fi

@@ -56,6 +56,10 @@ brew bundle -q --file="$HOME/.Brewfile"
 
 if [[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]; then
   sudo xcodebuild -license accept
+
+  # Add iOS & Watch Simulator to Launchpad
+  sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
+  sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
 fi
 
 # Update all Apple software and auto agree to any licenses
@@ -131,6 +135,25 @@ else
   set_config "directory" "$mackup_dir" "$HOME/.mackup.cfg"
 fi
 
+# Create ~/Developer folder if it doesn't exist
+echo " => Creating ~/Developer folder"
+mkdir -p $HOME/Developer
+
+# Update computer name (as done via System Preferences → Sharing)
+echo " => Updating computer name"
+sudo scutil --set ComputerName "$NAME"
+sudo scutil --set HostName "$NAME"
+sudo scutil --set LocalHostName "$NAME"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$NAME"
+
+# TODO: Change the localhost page to contain some basic information
+
+# Set macOS preferences
+if [[ -f "$DOTFILES/scripts/macos.sh" ]]; then # && read -p "Do you want to reset macOS preferences? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
+  echo " => Configuring system preferences"
+  source "$DOTFILES/scripts/macos.sh"
+fi
+
 # Run user script if available
 if [[ -f "$USERCONFIG/install.sh" ]]; then
   echo " => Running user script"
@@ -150,15 +173,40 @@ if [[ -f "$DOTFILES/scripts/backup.sh" ]]; then
 fi
 
 echo
-echo "User setup is complete."
+echo "System setup is complete."
 echo
-echo "We will now configure the macOS preferences. All the applications"
-echo "will be closed including this terminal session. Please save your"
-echo "work before continuing to the next step."
+echo "We will now close all the affected applications including this terminal "
+echo "session. Please save all your work before continuing to the next step. "
+echo "Note that some of these changes require a logout/restart to take effect."
+echo
+read -p "Press any key to continue... " -n 1 -r
 echo
 
-# Set macOS preferences - we will run this last because this will reload the shell
-if [[ -f "$DOTFILES/scripts/macos.sh" ]] && read -p "Do you want to reset macOS preferences? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
-  echo " => Configuring system preferences"
-  source "$DOTFILES/scripts/macos.sh"
-fi
+########################################################################################################
+# Kill affected applications - Always do it at the end of the script, as this will kill the script too #
+########################################################################################################
+
+for app in "Activity Monitor" \
+    "Address Book" \
+    "Calendar" \
+    "cfprefsd" \
+    "Contacts" \
+    "Dock" \
+    "Finder" \
+    "Google Chrome Canary" \
+    "Google Chrome" \
+    "Mail" \
+    "Messages" \
+    "Opera" \
+    "Photos" \
+    "Safari" \
+    "SizeUp" \
+    "Spectacle" \
+    "SystemUIServer" \
+    "Terminal" \
+    "Transmission" \
+    "Tweetbot" \
+    "Twitter" \
+    "iCal"; do
+    killall "${app}" &> /dev/null
+done
