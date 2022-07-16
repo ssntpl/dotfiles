@@ -7,7 +7,7 @@ sudo -v
 while true; do sudo -n true; sleep 50; kill -0 "$$" || exit; done 2>/dev/null &
 
 # launch process to prevent sleep and move it to the background
-caffeinate -s &
+caffeinate -dimsu &
 # save the process ID
 CAFFEINATE_PID=$!
 
