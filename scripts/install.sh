@@ -45,7 +45,7 @@ fi
 echo " => Updating Homebrew"
 brew update
 rm -rf "$HOME/.Brewfile"
-cp "$DOTFILES/Brewfile.global" "$HOME/.Brewfile"
+cp "$DOTFILES/config/Brewfile.global" "$HOME/.Brewfile"
 if [[ -f "$USERCONFIG/Brewfile" ]]; then
   cat "$USERCONFIG/Brewfile" >> "$HOME/.Brewfile"
 fi

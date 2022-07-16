@@ -45,7 +45,7 @@ If you did all of the above you may now follow these install instructions to set
     ./run.sh
     ```
 
-5. Restart your computer to finalize the process
+5. Your computer will restart to finalize the process
 
 Your Mac is now ready to use!
 
