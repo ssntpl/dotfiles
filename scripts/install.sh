@@ -185,8 +185,13 @@ echo "We will now close all the affected applications including this terminal "
 echo "session. Please save all your work before continuing to the next step. "
 echo "Note that some of these changes require a logout/restart to take effect."
 echo
-read -p "Press any key to continue... " -n 1 -r
 echo
+echo "The system will restart now."
+read -p "Press Enter key to continue... " -n 1 -r
+echo
+
+# Restart is required to apply changes that require logout login
+sudo shutdown -r now
 
 ########################################################################################################
 # Kill affected applications - Always do it at the end of the script, as this will kill the script too #
