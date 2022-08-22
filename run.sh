@@ -23,7 +23,7 @@ if [[ -f "$CONFIG_FILE" ]]; then
 fi
 
 # We are setting DOTFILES after sourcing the CONFIG_FILE as it may contain outdated location
-DOTFILES=$(dirname "$0")
+DOTFILES="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 # Download all the dotfiles before proceeding to the next step
 ICLOUD_DOTFILES_TOTAL_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
