@@ -84,7 +84,7 @@ fi
 # mysql -u root -e "ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
 
 # Install PHP extensions with PECL
-printf "\n" | pecl install imagick memcached redis swoole xdebug
+# printf "\n" | pecl install imagick memcached redis swoole xdebug
 
 # Install global Composer packages
 echo " => Installing composer packages"
