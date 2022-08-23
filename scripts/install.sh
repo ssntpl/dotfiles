@@ -37,7 +37,8 @@ fi
 
 # Check for Oh My Zsh and install if we don't have it
 if test ! $(which omz); then
-echo " => Installing Oh My Zsh"
+  echo " => Installing Oh My Zsh"
+  RUNZSH=no # The installer will not run zsh after the install
   /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
 fi
 
@@ -72,6 +73,9 @@ if [[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]; then
   sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app" "/Applications/Simulator.app"
   sudo ln -sf "/Applications/Xcode.app/Contents/Developer/Applications/Simulator (Watch).app" "/Applications/Simulator (Watch).app"
 fi
+
+# Start and set to auto-start MySQL
+brew services restart mysql
 
 # Update all Apple software and auto agree to any licenses
 if read -p "Do you want to update Apple software? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
