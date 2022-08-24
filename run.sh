@@ -28,15 +28,12 @@ DOTFILES="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 # Download all the dotfiles before proceeding to the next step
 ICLOUD_DOTFILES_TOTAL_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
 ICLOUD_DOTFILES_COUNT=$ICLOUD_DOTFILES_TOTAL_COUNT
-if (( $ICLOUD_DOTFILES_TOTAL_COUNT )); then
-  echo "Downloading $ICLOUD_DOTFILES_TOTAL_COUNT backup files from icloud..."
+while (( $ICLOUD_DOTFILES_COUNT )); do
+  echo " => Downloading $ICLOUD_DOTFILES_COUNT of $ICLOUD_DOTFILES_TOTAL_COUNT backup files from icloud..."
   find "$DOTFILES" -type f -name "*.icloud" -exec brctl download {} \;
-  while (( $ICLOUD_DOTFILES_COUNT )); do
-    sleep 10
-    ICLOUD_DOTFILES_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
-    echo " => Remaining $ICLOUD_DOTFILES_COUNT of $ICLOUD_DOTFILES_TOTAL_COUNT"
-  done
-fi
+  sleep 10
+  ICLOUD_DOTFILES_COUNT=$(find "$DOTFILES" -type f -name "*.icloud" | wc -l)
+done
 
 # Source the functions required for this script
 source "$DOTFILES/scripts/functions.sh"
