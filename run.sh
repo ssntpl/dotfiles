@@ -49,3 +49,9 @@ if [[ -f "$DOTFILES/scripts/backup.sh" ]]; then # && read -p "Do you want to bac
   echo " => Backing up your Mac"
   source "$DOTFILES/scripts/backup.sh"
 fi
+
+# Update all Apple software and auto agree to any licenses
+if read -p "Do you want to update Apple software? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
+  echo " => Updating all system software"
+  sudo softwareupdate --install --agree-to-license -a
+fi

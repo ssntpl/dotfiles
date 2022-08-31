@@ -33,13 +33,21 @@ set_config "USERCONFIG"
 if test ! $(which brew); then
   echo " => Installing Homebrew"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  # Add brew to path in current terminal session. New sessions will already have brew in path.
+  eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
 # Check for Oh My Zsh and install if we don't have it
 if test ! $(which omz); then
   echo " => Installing Oh My Zsh"
   RUNZSH=no # The installer will not run zsh after the install
-  /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
+  /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)" "" --unattended
+fi
+
+# Install rosetta on Apple Silicon
+if [[ $(uname -p) == 'arm' ]]; then
+  softwareupdate --install-rosetta --agree-to-license
 fi
 
 # Update Homebrew recipes
@@ -50,7 +58,6 @@ cp "$DOTFILES/config/Brewfile.global" "$HOME/.Brewfile"
 if [[ -f "$USERCONFIG/Brewfile" ]]; then
   cat "$USERCONFIG/Brewfile" >> "$HOME/.Brewfile"
 fi
-set_config "USERCONFIG"
 
 # Confirm user to install xcode
 if read -p "Do you want to install xcode? [Y/n] " -n 1 -r INSTALL_XCODE && echo && ([[ $INSTALL_XCODE =~ ^[Yy]$ ]] || [[ -z $INSTALL_XCODE ]]); then
@@ -76,12 +83,6 @@ fi
 
 # Start and set to auto-start MySQL
 brew services restart mysql
-
-# Update all Apple software and auto agree to any licenses
-if read -p "Do you want to update Apple software? [Y/n] " -n 1 -r && echo && ([[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]); then
-  echo " => Updating all system software"
-  sudo softwareupdate --install --agree-to-license -a
-fi
 
 # Set default MySQL root password and auth type
 # echo " => Setting root mysql password to 'password'"
