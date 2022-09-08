@@ -27,7 +27,7 @@ mkdir -p $HOME/Developer
 
 # Update computer name (as done via System Preferences → Sharing)
 echo " => Updating computer name"
-NAME_WITHOUT_SPACE=$(echo $NAME | sed 's/ //g')
+NAME_WITHOUT_SPACE=$(echo "$NAME $(tr '[:lower:]' '[:upper:]' <<< ${USER:0:1})${USER:1}" | sed 's/ //g')
 sudo scutil --set ComputerName "$NAME_WITHOUT_SPACE"
 sudo scutil --set HostName "$NAME_WITHOUT_SPACE"
 sudo scutil --set LocalHostName "$NAME_WITHOUT_SPACE"
