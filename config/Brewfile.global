@@ -24,7 +24,7 @@ brew 'wget'
 
 # Web Development
 brew 'php'
-brew 'php@7.4'
+# brew 'php@7.4'
 brew 'composer'
 brew 'imagemagick'
 brew 'libmemcached'
@@ -55,6 +55,7 @@ cask 'db-browser-for-sqlite'
 # Sequel Pro
 cask 'tableplus'
 cask 'postman'
+cask 'soapui'
 # cask 'insomnia'     # OpenSource API testing client
 # brew 'httpie'   # CLI API client
 # cask 'transmit'   # Paid tool for File transfer to FTP and cloud
@@ -72,7 +73,7 @@ cask 'postman'
 # brew 'tree' # List directories in a tree structure
 
 # Design
-cask 'figma'
+# cask 'figma'
 cask 'imageoptim'   # optimise image sizes without loosing quality
 # brew 'jpegoptim'  # Spatie Medialibrary
 # brew 'optipng'    # Spatie Medialibrary
