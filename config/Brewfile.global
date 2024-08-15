@@ -55,7 +55,8 @@ cask 'db-browser-for-sqlite'
 # Sequel Pro
 cask 'tableplus'
 cask 'postman'
-cask 'soapui'
+brew 'mailpit'      # a local tool like mailtrap. GUI on port 8025 and SMTP port on 1025
+# cask 'soapui'     # Just like postman but for SOAP APIs
 # cask 'insomnia'     # OpenSource API testing client
 # brew 'httpie'   # CLI API client
 # cask 'transmit'   # Paid tool for File transfer to FTP and cloud
@@ -65,12 +66,14 @@ cask 'soapui'
 # cask 'little-snitch' # Host-based application firewall
 # brew 'awscli'
 # cask 'github'
-# brew 'gh' # Github cli
+brew 'gh' # Github cli
 # brew 'hub' # Github
 # brew 'stripe/stripe-cli/stripe'
 # brew 'svn'
 # brew 'trash' # Manage the Trash bin
 # brew 'tree' # List directories in a tree structure
+brew 'jq'       # Command-line JSON processor
+brew 'qpdf'    # PDF transformation and inspection utility
 
 # Design
 # cask 'figma'

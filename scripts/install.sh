@@ -84,6 +84,9 @@ fi
 # Start and set to auto-start MySQL
 brew services restart mysql
 
+# Start and set to auto-start mailpit
+brew services restart mailpit
+
 # Set default MySQL root password and auth type
 # echo " => Setting root mysql password to 'password'"
 # mysql -u root -e "ALTER USER root@localhost IDENTIFIED WITH mysql_native_password BY 'password'; FLUSH PRIVILEGES;"
@@ -93,7 +96,7 @@ brew services restart mysql
 
 # Install global Composer packages
 echo " => Installing composer packages"
-composer global require laravel/installer laravel/valet laravel/vapor-cli laravel/forge-cli
+composer global require laravel/installer laravel/valet #laravel/vapor-cli laravel/forge-cli
 
 # Install Laravel Valet
 echo " => Installing valet"
@@ -134,6 +137,10 @@ cp "$DOTFILES/config/phpmyadmin.config.inc.php" $(brew --prefix)/etc/phpmyadmin.
 cd $(brew --prefix)/share/phpmyadmin/
 valet link
 cd "$DOTFILES"
+
+# Proxy mailpit.test to mailpit service on port 8025
+echo " => Configuring mailpit (access url: http://mailpit.test)"
+valet proxy mailpit http://127.0.0.1:8025
 
 # Configuring mackup files
 echo " => Configuring mackup files"
